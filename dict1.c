@@ -1,0 +1,132 @@
+//Coded by Md.Fahmi Islam. mdfahmii@student.unimelb.edu.au. id - 961935;
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <assert.h>
+#include "bst.h"
+
+#define MAX_INPUT_LENGTH 256
+#define MAX_STRING_LENGTH 128
+#define SIZE_OF_PUDATETIME 19
+#define NUMBER_OF_ITEMS 18
+#define POSITION_OF_PUDATETIME 15
+
+struct bst {
+    struct bst *left;
+    struct bst *right;
+    struct bst *equals;
+    char  *data;
+    char *key;
+    int totalComparisons;
+    
+};
+
+//Going to make a BST by scanning a file for data, then going to look for keys
+//taken from input and output the dictionary the key contains
+
+int main(int argc, char **argv) { 
+	int comparisons = 0, i = 0;
+    struct bst *root = NULL; 
+    struct bst *next = NULL;
+    char *files = argv[1];
+    char *outputfile = argv[2];
+    int sizeOfKey=0;
+    char *input;
+    input = malloc(sizeof(char) * MAX_STRING_LENGTH);
+    assert(input);
+    
+    
+    
+    FILE *readFilePointer, *writeFilePointer;
+    readFilePointer = fopen(files, "r");
+    
+    writeFilePointer = fopen(outputfile, "w");
+    //get the total input lines in the file and make 2 pointers to arrays of the 
+    //appropriate rows
+    int lines = getLines(files);
+   
+   
+    char *data[lines];
+    char *key[lines];
+    
+    //store the whole string from file and into data and collect the key from
+    //data and store it in keys
+    //then create the binary search tree
+    for (i = 0; i < lines; i++) {
+    	data[i] = malloc(sizeof(char) * MAX_INPUT_LENGTH);
+    	assert(data[i]);
+    	
+    	fscanf(readFilePointer, " %[^\n]s", data[i]);
+    	
+    	key[i] = getKey(data[i]);
+    	root = insert(root, key[i], data[i]);
+    }
+    
+    
+
+   //scan each line in the keyfile
+    while(scanf(" %[^\n]s", input) != EOF){
+    	sizeOfKey = strlen(input);
+    	*(input + sizeOfKey ) = '\0';
+    	
+    	
+    	//find the node where the key is
+    	next = search(root, input, comparisons);
+    	
+    	// if key is not found
+    	if(next == NULL) {
+    		fprintf(writeFilePointer, "%s --> NOTFOUND\n", input);
+    		
+		}
+		
+				
+    
+    	
+    	
+		//if key is found, print the dictionary in outputfile
+    	else if (strcmp(next->key, input) == 0) {
+    		
+    		printDict(next->data, outputfile, input);
+			
+    	
+    		comparisons=0;
+    		//if there are multiple nodes with same key, print all
+    		while (next -> equals != NULL) {
+    			next = next->equals;
+				next -> totalComparisons++;
+    			
+    			printDict(next -> data, outputfile, input);
+    			
+    			
+    		}
+    	
+    		
+    	}
+    	//print the stdin values
+    	printf("%s --> ", input);
+    	printf("%d\n", next -> totalComparisons);
+    
+    }
+    
+   
+    //free pointers and close files
+    for(i = 0; i < lines; i++) {
+    	free(key[i]);
+    	free(data[i]);
+    }
+    
+	fclose(writeFilePointer);
+	fclose(readFilePointer);
+    free(input);
+    input = NULL;
+    free(next);
+    next = NULL;
+    readFilePointer=writeFilePointer = NULL;
+    freeTree(root);
+    root = NULL;
+    
+   
+    return 0; 
+} 

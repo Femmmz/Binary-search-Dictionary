@@ -1,0 +1,11 @@
+struct bst;
+struct bst *newbst(char* item, char* string);
+struct bst* search(struct bst* root, char* key, int count) ;
+int inorder(struct bst *root, int input, char* file, int matches);
+struct bst* insert(struct bst* node, char* key, char* string);
+void printDict(char* string, char* file, char* key);
+void freeTree(struct bst *parent);
+int getLines(char* datafile);
+char* getKey(char* string);
+int weirdFunction(struct bst *node, int input, char* file);
+void notFound(char* file, int input);
