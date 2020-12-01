@@ -33,6 +33,8 @@ Example of use:
 - dict1 datafile outputfile then type in keys; or
 - dict1 datafile outputfile < keyfile 
 
+the datafiles are the testscript files listed. 
+
 
 dict2-
 Simple function that takes a PU location ID as an input and returns the PUdatetime keys in the output file. The search was done using in-order tree traversal. 
